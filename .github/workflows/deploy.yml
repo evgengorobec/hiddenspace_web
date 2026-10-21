@@ -1,0 +1,51 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+env:
+  DEPLOY_HOST: 46.101.15.52
+  DEPLOY_USER: ${{ vars.DEPLOY_USER || 'root' }}
+  DEPLOY_PATH: ${{ vars.DEPLOY_PATH || '/var/www/hiddenspace_web' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install sshpass
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq sshpass rsync
+
+      - name: Trust server host key
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+
+      - name: Sync files
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+        run: |
+          sshpass -e ssh "$DEPLOY_USER@$DEPLOY_HOST" "mkdir -p '$DEPLOY_PATH'"
+          sshpass -e rsync -az --delete \
+            --exclude '.git/' \
+            --exclude '.github/' \
+            --exclude '.env' \
+            --exclude '__pycache__/' \
+            --exclude '.venv/' \
+            ./ "$DEPLOY_USER@$DEPLOY_HOST:$DEPLOY_PATH/"
+
+      - name: Run post-deploy command
+        if: vars.POST_DEPLOY_COMMAND != ''
+        env:
+          SSHPASS: ${{ secrets.SSH_PASSWORD }}
+          POST_DEPLOY_COMMAND: ${{ vars.POST_DEPLOY_COMMAND }}
+        run: |
+          sshpass -e ssh "$DEPLOY_USER@$DEPLOY_HOST" "cd '$DEPLOY_PATH' && $POST_DEPLOY_COMMAND"
