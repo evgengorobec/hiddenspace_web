@@ -27,7 +27,9 @@ jobs:
       - name: Trust server host key
         run: |
           mkdir -p ~/.ssh
-          ssh-keyscan -H "$DEPLOY_HOST" >> ~/.ssh/known_hosts
+          # fixed host key instead of ssh-keyscan: keyscan opens several probe
+          # connections, which fail2ban (sshd, aggressive) bans as an attack
+          echo "$DEPLOY_HOST ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIGnw9JBF4M3Zum498zVMpRmX3snh9L84uNIfF5QGbRbR" >> ~/.ssh/known_hosts
 
       - name: Sync files
         env:
