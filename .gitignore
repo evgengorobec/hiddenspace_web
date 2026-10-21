@@ -221,3 +221,7 @@ __marimo__/
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# служебное для Claude — не выкладывать на сайт
+CLAUDE.md
+.claude/

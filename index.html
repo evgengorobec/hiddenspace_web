@@ -9,21 +9,14 @@
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
   <style>
+    /* первый экран: только логотип на чёрном, ниже фиксированного меню */
     .hero {
-      position: relative;
-      min-height: 100vh;
+      height: 100vh;
+      height: 100svh;
+      padding-top: 56px;
       background: #000 url("assets/logo.png") center / contain no-repeat;
+      background-origin: content-box;
     }
-    /* затемнение поверх логотипа, чтобы текст и кнопки читались */
-    .hero::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: rgba(0, 0, 0, .45);
-    }
-    .hero > .container { position: relative; z-index: 1; }
-    .hero h1, .hero .lead { text-shadow: 0 2px 12px rgba(0, 0, 0, .9); }
-    .hero h1 { letter-spacing: .05em; }
     .feature-icon { font-size: 2rem; }
   </style>
 </head>
@@ -46,13 +39,8 @@
     </div>
   </nav>
 
-  <header class="hero d-flex align-items-center text-center">
-    <div class="container">
-      <h1 class="display-3 fw-bold mb-3">Hidden Space</h1>
-      <p class="lead text-light mb-4">Короткое описание проекта — одно-два предложения о том, что это и зачем.</p>
-      <a href="#features" class="btn btn-primary btn-lg px-4 me-2">Узнать больше</a>
-      <a href="#contact" class="btn btn-outline-light btn-lg px-4">Связаться</a>
-    </div>
+  <header class="hero" role="img" aria-label="Hidden Space">
+    <h1 class="visually-hidden">Hidden Space</h1>
   </header>
 
   <section id="about" class="py-5">
